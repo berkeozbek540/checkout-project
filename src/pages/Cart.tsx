@@ -1,5 +1,8 @@
+import { Link } from "react-router-dom";
 import { useCartStore } from "../store/cartStore";
 import { Minus, Plus, X } from "lucide-react";
+import OrderSummary from "../components/OrderSummary";
+import { calcTotals } from "../utils/calcTotals";
 
 export default function Cart() {
   const cart = useCartStore((state) => state.cart);
@@ -7,16 +10,9 @@ export default function Cart() {
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
 
+  const { subtotal, shipping, total } = calcTotals(cart);
+
   if (cart.length === 0) return <div>Sepet boş.</div>;
-
-  const subTotal = cart.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
-  const shippingAmount = subTotal > 300 ? 0 : 44.99;
-  const totalPrice = subTotal + shippingAmount;
-
-  const formatPrice = (value: number) =>
-    value.toLocaleString("tr-TR", { minimumFractionDigits: 2 });
 
   return (
     <div className="container mx-auto p-4">
@@ -81,26 +77,14 @@ export default function Cart() {
           ))}
         </div>
         <div className="col-span-1 border border-gray-300 p-4 rounded-lg max-h-fit">
-          <div>
-            <p className="font-semibold text-xl">Sipariş Özeti</p>
-            <div className="flex justify-between py-4 ">
-              <p className="text-gray-500">Ara Toplam </p>
-              <p className="font-semibold text-lg">{formatPrice(subTotal)} TL</p>
-            </div>
-            <div className="flex justify-between pb-4 border-b border-gray-300">
-              <p className="text-gray-500">Kargo Ücreti</p>
-              <p className="font-semibold text-lg">{shippingAmount} TL</p>
-            </div>
-            <div className="flex justify-between py-4">
-              <p>Toplam</p>
-              <p className="font-bold text-xl">{totalPrice} TL</p>
-            </div>
-            <div>
-              <button className="bg-black text-white p-3 mt-2 w-full rounded-md cursor-pointer hover:bg-gray-700">
-                Sepeti Onayla
-              </button>
-            </div>
-          </div>
+          <Link to="/checkout">
+            <OrderSummary
+              subtotal={subtotal}
+              shipping={shipping}
+              total={total}
+              buttonLabel="Siparişi Onayla"
+            />
+          </Link>
         </div>
       </div>
     </div>
