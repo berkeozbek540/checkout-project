@@ -12,20 +12,16 @@ export default function Success() {
   const resetCheckout = useCartStore((state) => state.resetCheckout);
 
   useEffect(() => {
-    // checkout yapılmadan success'e geleni anasayfaya at
     if (!checkoutCompleted) {
       navigate("/");
       return;
     }
 
-    // Sipariş ID üret
     const id = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     setOrderId(id);
 
-    // Sepeti temizle
     clearCart();
 
-    // Bir sonraki girişte redirect olmasın diye flag'i sıfırla
     resetCheckout();
   }, []);
   return (
