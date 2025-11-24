@@ -7,9 +7,12 @@ export interface CartItem extends Product {
 
 interface CartState {
   cart: CartItem[];
+  checkoutCompleted: boolean;
   addToCart: (product: Product) => void;
   removeFromCart: (id: number) => void;
   decreaseQuantity: (id: number) => void;
+  markCheckoutCompleted: () => void;
+  resetCheckout: () => void;
   clearCart: () => void;
 }
 
@@ -44,6 +47,11 @@ export const useCartStore = create<CartState>((set) => ({
         item.id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
       ),
     })),
+  checkoutCompleted: false,
+
+  markCheckoutCompleted: () => set({ checkoutCompleted: true }),
+
+  resetCheckout: () => set({ checkoutCompleted: false }),
 
   clearCart: () => set({ cart: [] }),
 }));

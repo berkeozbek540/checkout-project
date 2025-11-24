@@ -1,19 +1,32 @@
 import { CircleCheck } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useCartStore } from "../store/cartStore";
 
 export default function Success() {
-  const [randomString, setRandomString] = useState<string>("");
+  const [orderId, setOrderId] = useState("");
+  const navigate = useNavigate();
 
-  const generateRandomNumber = () => {
-    let result = "";
-    for (let i = 0; i < 10; i++) {
-      result += Math.floor(Math.random() * 10).toString();
-    }
-    setRandomString(result);
-  };
+  const clearCart = useCartStore((state) => state.clearCart);
+  const checkoutCompleted = useCartStore((state) => state.checkoutCompleted);
+  const resetCheckout = useCartStore((state) => state.resetCheckout);
 
   useEffect(() => {
-    generateRandomNumber();
+    // checkout yapılmadan success'e geleni anasayfaya at
+    if (!checkoutCompleted) {
+      navigate("/");
+      return;
+    }
+
+    // Sipariş ID üret
+    const id = `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    setOrderId(id);
+
+    // Sepeti temizle
+    clearCart();
+
+    // Bir sonraki girişte redirect olmasın diye flag'i sıfırla
+    resetCheckout();
   }, []);
   return (
     <div className="container mx-auto max-w-xl p-8 text-center">
@@ -21,15 +34,15 @@ export default function Success() {
       <h1 className="text-3xl font-bold text-green-600 mb-4">Siparişiniz Alındı!</h1>
 
       <p className="text-gray-700 mb-8">
-        Siparişiniz başarıyla oluşturuldu. Sipariş numaranız: #{randomString}. Size e-posta
-        üzerinden bilgilendirme yapılacaktır.
+        Sipariş numaranız: <span className="font-semibold">#{orderId}. </span>
+        E-posta ile bilgilendirme yapılacaktır.
       </p>
 
-      <a
-        href="/"
+      <Link
+        to="/"
         className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-blue-700 transition">
         Ana Sayfaya Dön
-      </a>
+      </Link>
     </div>
   );
 }

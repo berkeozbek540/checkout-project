@@ -3,6 +3,7 @@ import { useMask } from "@react-input/mask";
 import { useCartStore } from "../store/cartStore";
 import OrderSummary from "../components/OrderSummary";
 import { calcTotals } from "../utils/calcTotals";
+import { useNavigate } from "react-router-dom";
 
 interface CheckoutFormState {
   name: string;
@@ -19,6 +20,8 @@ interface CheckoutFormState {
 }
 
 export default function Checkout() {
+  const navigate = useNavigate();
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [checkoutForm, setCheckoutForm] = useState<CheckoutFormState>({
     name: "",
@@ -68,16 +71,14 @@ export default function Checkout() {
     e.preventDefault();
 
     if (!validateForm()) {
-      // shake animasyonu tetikletmek için
       const form = document.getElementById("checkout-form");
       form?.classList.add("shake");
 
       setTimeout(() => form?.classList.remove("shake"), 500);
       return;
     }
-
-    // VALID → success page
-    window.location.href = "/success";
+    useCartStore.getState().markCheckoutCompleted();
+    navigate("/success");
   };
 
   const handleChange = (
