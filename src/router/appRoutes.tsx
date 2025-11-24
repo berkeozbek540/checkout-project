@@ -9,6 +9,7 @@ import AdminLogin from "../pages/admin/AdminLogin";
 import AdminProducts from "../pages/admin/AdminProducts";
 import MainLayout from "../layouts/MainLayout";
 import Products from "../pages/Products";
+import Success from "../pages/Success";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
       {
         path: "/checkout/summary",
         element: <Summary />,
+      },
+      {
+        path: "/success",
+        element: <Success />,
       },
     ],
   },
